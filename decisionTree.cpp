@@ -20,6 +20,7 @@ class DecisionTreeClassifier{
 
 };
 
+//Print wrappers - polymorphism for various data types
 void println(string s){
     cout << s << endl;
 }
@@ -133,10 +134,20 @@ vector<vector<string>> shuffleDataFrame(vector<vector<string>> data){
     return data;
 }
 
+//Split dataframe into train and test based on trainRatio(between 0 and 1)
 pair<vector<vector<string>>, vector<vector<string>>> train_test_split(vector<vector<string>> data, float trainRatio){
     pair<vector<vector<string>>, vector<vector<string>>> result;
     int lastTrainIdx = (int) (trainRatio * (float) data.size());
-    
+    println(lastTrainIdx);
+    for(int i=0; i<data.size(); i++){
+        if(i < lastTrainIdx){
+            result.first.push_back(data.at(i));
+        }
+        else{
+            result.second.push_back(data.at(i));
+        }
+    }
+    return result;
 }
 
 int main(){
@@ -158,6 +169,13 @@ int main(){
     //println("Attributes: ");
     //printDataFrame(attr_targets.first);
     vector<vector<string>> shuffled = shuffleDataFrame(seperatedData.second);
-    printDataFrame(shuffled);
+    //printDataFrame(shuffled);
+    pair<vector<vector<string>>, vector<vector<string>>> data_split = train_test_split(shuffled, 0.8);
+    print("Length of Train data: ");
+    int trainSize = data_split.first.size();
+    println(trainSize);
+    print("Length of Test data: ");
+    int testSize = data_split.second.size();
+    println(testSize);
     return 0;
 }

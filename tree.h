@@ -11,9 +11,8 @@ namespace tree{
     class Node{
         //pointers to other nodes
         //Vector to hold node pointers
-    };
-
-    class Tree{
-
+        int id;
+        std::vector<Node *> children;
+        std::string hypothesis;
     };
 }
