@@ -18,7 +18,7 @@ class Node{
 };
 
 class Tree{
-    
+
 };
 
 
@@ -31,8 +31,7 @@ vector<vector<string>> read_csv(string filename){
     if(!myFile.is_open()) throw runtime_error("Could not open file");
 
     // Helper vars
-    string line;
-    string attribute;
+    string line, attribute;
     
     if(myFile.good())
     {
