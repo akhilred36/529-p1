@@ -1,59 +1,70 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <algorithm>
+#include <random>
 #include <vector>
 #include <utility> // pair
 #include <stdexcept> // runtime_error
 #include <sstream> // stringstream
+#include <time.h>
+#include <stdlib.h>
+#include "tree.h"
+#include "fileManipulation.h"
 
 using namespace std;
+using namespace tree;
+using namespace fileManipulation;
 
 class DecisionTreeClassifier{
 
 };
 
-class Node{
-    //pointers to other nodes
-    //Vector to hold node pointers
-};
+void println(string s){
+    cout << s << endl;
+}
 
-class Tree{
+void print(string s){
+    cout << s;
+}
 
-};
+void println(int s){
+    cout << s << endl;
+}
 
+void print(int s){
+    cout << s;
+}
 
-//From https://www.gormanalysis.com/blog/reading-and-writing-csv-files-with-cpp/
-vector<vector<string>> read_csv(string filename){
+void println(float s){
+    cout << s << endl;
+}
+
+void print(float s){
+    cout << s;
+}
+
+vector<vector<string>> read_csv(string filename){ //From https://www.gormanalysis.com/blog/reading-and-writing-csv-files-with-cpp/
     vector<vector<string>> result;
-    // Create an input filestream
-    ifstream myFile(filename);
-    // Make sure the file is open
-    if(!myFile.is_open()) throw runtime_error("Could not open file");
-
-    // Helper vars
-    string line, attribute;
-    
+    ifstream myFile(filename); // Create an input filestream
+    if(!myFile.is_open()) throw runtime_error("Could not open file"); // Make sure the file is open
+    string line, attribute; // Helper vars
     if(myFile.good())
     {
-        // Extract the first line in the file
-        while(getline(myFile, line)){
+        while(getline(myFile, line)){ // Extract the first line in the file
             vector<string> row;
-            // Create a stringstream from line
-            stringstream ss(line);
-            // Extract each column name
-            while(getline(ss, attribute, ',')){
-                // Push attributes to row
-                row.push_back(attribute);
+            stringstream ss(line); // Create a stringstream from line
+            while(getline(ss, attribute, ',')){ // Extract each column name
+                row.push_back(attribute); // Push attributes to row
             }
-            //Push rows to the result vector
-            result.push_back(row);
+            result.push_back(row); //Push rows to the result vector
         }
     }
-    // Close file
-    myFile.close();
+    myFile.close(); // Close file
     return result;
 }
 
+//Print 2 dimensional dataframe
 void printDataFrame(vector<vector<string>> data){
     for(int i=0; i<data.size(); i++){
         for(int j=0; j<data.at(i).size(); j++){
@@ -64,6 +75,7 @@ void printDataFrame(vector<vector<string>> data){
     return; 
 }
 
+//Print 1 dimensional row/column
 void printColumns(vector<string> data){
     for(int i=0; i<data.size(); i++){
         cout << data.at(i) << " ";
@@ -71,13 +83,28 @@ void printColumns(vector<string> data){
     cout << "\n";
 }
 
-pair<vector<vector<string>>, vector<string>> separateTargets(vector<vector<string>> data){
+//Separate attributes from target and return as a pair
+pair<vector<vector<string>>, vector<string>> seperateTargets(vector<vector<string>> data, int targetIndex){
     pair<vector<vector<string>>, vector<string>> result;
-    
+    vector<string> targets;
+    for(int i=0; i<data.size(); i++){
+        vector<string> row;
+        for(int j=0; j<data.at(i).size(); j++){
+            if(j == targetIndex){
+                targets.push_back(data.at(i).at(j));
+            }
+            else{
+                row.push_back(data.at(i).at(j));
+            }
+        }
+        result.first.push_back(row);
+    }
+    result.second = targets;
+    return result;
 }
 
-//Separate column headers and return as a pair<>
-pair<vector<string>, vector<vector<string>>> separateHeader(vector<vector<string>> data){
+//Separate column headers and return as a pair
+pair<vector<string>, vector<vector<string>>> seperateHeader(vector<vector<string>> data){
     pair<vector<string>, vector<vector<string>>> result;
     for(int i=0; i<data.size(); i++){
         vector<string> row;
@@ -94,19 +121,43 @@ pair<vector<string>, vector<vector<string>>> separateHeader(vector<vector<string
     return result;
 }
 
+//Shuffle dataframe
+vector<vector<string>> shuffleDataFrame(vector<vector<string>> data){
+    int num = rand() % data.size();
+    vector<int> indices;
+    for(int i=0; i<num; i++){
+        indices.push_back(i);
+    }
+    auto rng = default_random_engine {};
+    shuffle(data.begin(), data.end(), rng);
+    return data;
+}
+
+pair<vector<vector<string>>, vector<vector<string>>> train_test_split(vector<vector<string>> data, float trainRatio){
+    pair<vector<vector<string>>, vector<vector<string>>> result;
+    int lastTrainIdx = (int) (trainRatio * (float) data.size());
+    
+}
 
 int main(){
     //Initialize vector of string vectors for the dataframe
     vector<vector<string>> data; 
     data = read_csv("car_evaluation.csv");
-    //cout << "data: \n";
+    //println("Data: ");
     //printDataFrame(data);
-    cout << "Columns: \n";
-    pair<vector<string>, vector<vector<string>>> seperatedData = separateHeader(data);
+    //println("Columns: ");
+    pair<vector<string>, vector<vector<string>>> seperatedData = seperateHeader(data);
     vector<string> columns = seperatedData.first;
     vector<vector<string>> dataPoints = seperatedData.second;
-    printColumns(columns);
-    cout << "\n \n \n" << "Data points: \n";
+    //printColumns(columns);
+    //println("\n \n \n Data points:");
     //printDataFrame(dataPoints);
+    pair<vector<vector<string>>, vector<string>> attr_targets = seperateTargets(seperatedData.second, 6); 
+    //println(" \n \n Targets: ");
+    //printColumns(attr_targets.second);
+    //println("Attributes: ");
+    //printDataFrame(attr_targets.first);
+    vector<vector<string>> shuffled = shuffleDataFrame(seperatedData.second);
+    printDataFrame(shuffled);
     return 0;
 }
