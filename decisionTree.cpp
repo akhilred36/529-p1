@@ -124,11 +124,6 @@ pair<vector<string>, vector<vector<string>>> seperateHeader(vector<vector<string
 
 //Shuffle dataframe
 vector<vector<string>> shuffleDataFrame(vector<vector<string>> data){
-    int num = rand() % data.size();
-    vector<int> indices;
-    for(int i=0; i<num; i++){
-        indices.push_back(i);
-    }
     auto rng = default_random_engine {};
     shuffle(data.begin(), data.end(), rng);
     return data;
