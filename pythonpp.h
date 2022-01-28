@@ -32,6 +32,12 @@ vector<vector<string>> shuffleDataFrame(vector<vector<string>> data);
 
 pair<vector<vector<string>>, vector<vector<string>>> train_test_split(vector<vector<string>> data, float trainRatio);
 
+vector<vector<vector<string>>> attribute_based_split(vector<vector<string>> data, int attribute, vector<string> values);
+
+vector<string> getUniqueAttributes(vector<vector<string>> data, int attribute);
+
+double getGain(vector<vector<string>> data, string criterion, int attribute, int target);
+
 void println(string s);
 
 void print(string s);
