@@ -113,6 +113,12 @@ pair<vector<vector<string>>, vector<vector<string>>> train_test_split(vector<vec
     return result;
 }
 
+// cut out attribute column, and return k subsets based on k choices for said attribute
+vector<vector<vector<string>>> attribute_based_split(vector<vector<string>> data, int attribute){
+    vector<vector<vector<string>>> result;
+
+}   
+
 //Print wrappers - polymorphism for various data types
 void println(string s){
     cout << s << endl;
