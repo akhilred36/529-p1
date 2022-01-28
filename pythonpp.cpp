@@ -10,6 +10,7 @@
 #include <sstream> // stringstream
 #include <time.h>
 #include <stdlib.h>
+#include <set>
 
 using namespace std;
 
@@ -113,11 +114,58 @@ pair<vector<vector<string>>, vector<vector<string>>> train_test_split(vector<vec
     return result;
 }
 
-// cut out attribute column, and return k subsets based on k choices for said attribute
-vector<vector<vector<string>>> attribute_based_split(vector<vector<string>> data, int attribute){
-    vector<vector<vector<string>>> result;
+// get unique values of all attribute choices 
+vector<string> getUniqueAttributes(vector<vector<string>> data, int attribute){
+    vector<string> result;
+    set<string> attr_set;
+    for(int i=0; i<data.size(); i++){
+        attr_set.insert(data.at(i).at(attribute));
+    }
+    result.assign(attr_set.begin(), attr_set.end());
+    return result;
+}
 
+// cut out attribute column, and return k subsets based on k choices for said attribute
+vector<vector<vector<string>>> attribute_based_split(vector<vector<string>> data, int attribute, vector<string> values){
+    vector<vector<vector<string>>> result;
+    for(int i=0; i<values.size(); i++){
+        result.push_back(vector<vector<string>> {});
+    }
+    for(int i=0; i<data.size(); i++){
+        for(int j=0; j<values.size(); j++){
+            if(data.at(i).at(attribute).compare(values.at(j)) == 0){
+                result.at(j).push_back(data.at(i));
+            }
+        }
+    }
+    return result;
 }   
+
+// Get the information gain for a dataset, given the attribute's column id, target's column id, and split criterion (gini or entropy)
+//Incomplete
+double getGain(vector<vector<string>> data, string criterion, int attribute, int target){
+    double result;
+    int data_length = data.size();
+    vector<string> classes = getUniqueAttributes(data, target);
+    int length_classes = classes.size();
+    vector<string> attributes = getUniqueAttributes(data, attribute);
+    int attributes_length = attributes.size();
+    if(criterion.compare("entropy") == 0){
+        double probabilities[length_classes];
+        int counts[length_classes];
+        for(int i=0; i<length_classes; i++){
+            counts[i] = 0;
+        }
+    }
+    else if(criterion.compare("gini") == 0){
+        
+    }
+    else{
+        println("Invalid split criterion. Returning 0");
+        return 0;
+    }
+    return result;
+}
 
 //Print wrappers - polymorphism for various data types
 void println(string s){
