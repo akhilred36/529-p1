@@ -37,5 +37,13 @@ int main(){
     print("Length of Test data: ");
     int testSize = data_split.second.size();
     println(testSize);
+    vector<string> unique_attr = getUniqueAttributes(data_split.first, 1);
+    vector<vector<vector<string>>> sub_datasets = attribute_based_split(data_split.first, 1, unique_attr);
+    for(int i=0; i<sub_datasets.size(); i++){
+        print("Dataset ");
+        print(i);
+        print(" Length: ");
+        println((int) sub_datasets.at(i).size());
+    }
     return 0;
 }
