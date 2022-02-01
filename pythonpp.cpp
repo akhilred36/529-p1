@@ -156,7 +156,6 @@ vector<vector<vector<string>>> attribute_based_filter(vector<vector<string>> dat
             }
         }
     }
-    println(4);
     return result;
 }
 
@@ -229,8 +228,6 @@ double getGini(vector<vector<string>> data, int target){
         probabilities.push_back(counts[i]/total);
     }
     double sum = 0;
-    print("Size of probabilities: ");
-    println((int) probabilities.size());
     for(int i=0; i<probabilities.size(); i++){
         sum += (probabilities[i] * probabilities[i]);
     }
@@ -249,40 +246,55 @@ double getGain(vector<vector<string>> data, string criterion, int attribute, int
     if(criterion.compare("entropy") == 0){
         double impurity_parent = getEntropy(data, target);
         vector<vector<vector<string>>> subDatasets = attribute_based_filter(data, attribute);
-        double sum;
+        double sum = 0;
         for(int i=0; i<subDatasets.size(); i++){
             double entropy = getEntropy(subDatasets.at(i), target);
-            sum += ((subDatasets.at(i)).size()/data.size()) * entropy;
+            double calc = (((double) (subDatasets.at(i)).size())/(double) data.size())*entropy;
+            sum += calc;
         }
-        return impurity_parent - sum;
+        result = impurity_parent - sum;
+        return result;
     }
     else if(criterion.compare("gini") == 0){
-        println("Start Gini");
         double impurity_parent = getGini(data, target);
         vector<vector<vector<string>>> subDatasets = attribute_based_filter(data, attribute);
-        double sum;
+        double sum = 0;
         for(int i=0; i<subDatasets.size(); i++){
             double gini = getGini(subDatasets.at(i), target);
-            sum += ((subDatasets.at(i)).size()/data.size()) * gini;
+            sum += (((double)(subDatasets.at(i)).size())/(double) data.size()) * gini;
         }
-        println(8);
-        return impurity_parent - sum;
+        result = impurity_parent - sum;
+        return result;
     }
-    else if(criterion.compare("missclassificationError") == 0){
+    else if(criterion.compare("misclassificationError") == 0){
         double impurity_parent = getMisclassificationError(data, target);
         vector<vector<vector<string>>> subDatasets = attribute_based_filter(data, attribute);
-        double sum;
+        double sum = 0;
         for(int i=0; i<subDatasets.size(); i++){
             double me = getMisclassificationError(subDatasets.at(i), target);
-            sum += ((subDatasets.at(i)).size()/data.size()) * me;
+            sum += ((double) ((subDatasets.at(i)).size())/(double) data.size()) * me;
         }
-        return impurity_parent - sum;
+        result = impurity_parent - sum;
+        return result;
     }
     else{
         println("Invalid split criterion. Returning 0");
         return 0;
     }
     return result;
+}
+
+int getMaxGain(vector<vector<string>> data, string criterion, int target){
+    vector<double> gains;
+    for(int i=0; i<data.at(0).size(); i++){
+        if(i != target){
+            gains.push_back(getGain(data, criterion, i, target));
+            print("Gain: ");
+            println((float) gains[i]);
+        }
+    }
+    int maxElementIndex = max_element(gains.begin(),gains.end()) - gains.begin();
+    return maxElementIndex;
 }
 
 //Print wrappers - polymorphism for various data types

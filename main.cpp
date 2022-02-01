@@ -45,8 +45,12 @@ int main(){
         print(" Length: ");
         println((int) sub_datasets.at(i).size());
     }
-    double gainGini = getGain(data_split.first, "missclassificationError", 4, 6);
-    print("Gain: ");
-    println((float) gainGini);
+    double gainGini = getGain(data_split.first, "misclassificationError", 4, 6);
+    vector<vector<vector<string>>> attribute_split_datasets = attribute_based_filter(data_split.first, 0);
+    print("Length of subsets: ");
+    println((int) attribute_split_datasets.size());
+    int index = getMaxGain(data_split.first, "entropy", 6);
+    print("Index: ");
+    println(index);
     return 0;
 }
