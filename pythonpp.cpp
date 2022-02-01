@@ -150,12 +150,13 @@ vector<vector<vector<string>>> attribute_based_filter(vector<vector<string>> dat
         result.push_back(vector<vector<string>> {});
     }
     for(int i=0; i<data.size(); i++){
-        for(int j=0; j<data.size(); j++){
+        for(int j=0; j<uniqueValues.size(); j++){
             if((data.at(i).at(attribute)).compare(uniqueValues[j]) == 0){
                 result.at(j).push_back(data.at(i));
             }
         }
     }
+    println(4);
     return result;
 }
 
@@ -166,7 +167,7 @@ double getMisclassificationError(vector<vector<string>> data, int target){
     vector<double> probabilities;
     int total = data.size();
     for(int i=0; i<unq_targets.size(); i++){
-        counts[i] = 0;
+        counts.push_back(0);
     }
     for(int i=0; i<data.size(); i++){
         for(int j=0; j<unq_targets.size(); j++){
@@ -176,7 +177,7 @@ double getMisclassificationError(vector<vector<string>> data, int target){
         }
     }
     for(int i=0; i<counts.size(); i++){
-        probabilities[i] = counts[i]/total;
+        probabilities.push_back(counts[i]/total);
     }
     double max = *max_element(probabilities.begin(), probabilities.end());
     return 1-max;
@@ -189,7 +190,7 @@ double getEntropy(vector<vector<string>> data, int target){
     vector<double> probabilities;
     int total = data.size();
     for(int i=0; i<unq_targets.size(); i++){
-        counts[i] = 0;
+        counts.push_back(0);
     }
     for(int i=0; i<data.size(); i++){
         for(int j=0; j<unq_targets.size(); j++){
@@ -199,7 +200,7 @@ double getEntropy(vector<vector<string>> data, int target){
         }
     }
     for(int i=0; i<counts.size(); i++){
-        probabilities[i] = counts[i]/total;
+        probabilities.push_back(counts[i]/total);
     }
     double result = 0;
     for(int i=0; i<probabilities.size(); i++){
@@ -215,7 +216,7 @@ double getGini(vector<vector<string>> data, int target){
     vector<double> probabilities;
     int total = data.size();
     for(int i=0; i<unq_targets.size(); i++){
-        counts[i] = 0;
+        counts.push_back(0);
     }
     for(int i=0; i<data.size(); i++){
         for(int j=0; j<unq_targets.size(); j++){
@@ -225,13 +226,16 @@ double getGini(vector<vector<string>> data, int target){
         }
     }
     for(int i=0; i<counts.size(); i++){
-        probabilities[i] = counts[i]/total;
+        probabilities.push_back(counts[i]/total);
     }
     double sum = 0;
+    print("Size of probabilities: ");
+    println((int) probabilities.size());
     for(int i=0; i<probabilities.size(); i++){
-        sum += pow(probabilities[i], 2);
+        sum += (probabilities[i] * probabilities[i]);
     }
-    return 1-sum;
+    double result = 1-sum;
+    return result;
 }
 
 // Get the information gain for a dataset, given the attribute's column id, target's column id, and split criterion (gini or entropy)
@@ -253,6 +257,7 @@ double getGain(vector<vector<string>> data, string criterion, int attribute, int
         return impurity_parent - sum;
     }
     else if(criterion.compare("gini") == 0){
+        println("Start Gini");
         double impurity_parent = getGini(data, target);
         vector<vector<vector<string>>> subDatasets = attribute_based_filter(data, attribute);
         double sum;
@@ -260,6 +265,7 @@ double getGain(vector<vector<string>> data, string criterion, int attribute, int
             double gini = getGini(subDatasets.at(i), target);
             sum += ((subDatasets.at(i)).size()/data.size()) * gini;
         }
+        println(8);
         return impurity_parent - sum;
     }
     else if(criterion.compare("missclassificationError") == 0){

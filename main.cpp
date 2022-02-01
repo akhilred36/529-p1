@@ -45,5 +45,8 @@ int main(){
         print(" Length: ");
         println((int) sub_datasets.at(i).size());
     }
+    double gainGini = getGain(data_split.first, "missclassificationError", 4, 6);
+    print("Gain: ");
+    println((float) gainGini);
     return 0;
 }
