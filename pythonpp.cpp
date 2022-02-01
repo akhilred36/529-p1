@@ -284,7 +284,7 @@ double getGain(vector<vector<string>> data, string criterion, int attribute, int
     return result;
 }
 
-int getMaxGain(vector<vector<string>> data, string criterion, int target){
+int getMaxGainIndex(vector<vector<string>> data, string criterion, int target){
     vector<double> gains;
     for(int i=0; i<data.at(0).size(); i++){
         if(i != target){
