@@ -38,6 +38,14 @@ vector<string> getUniqueAttributes(vector<vector<string>> data, int attribute);
 
 double getGain(vector<vector<string>> data, string criterion, int attribute, int target);
 
+double getGini(vector<vector<string>> data, int target);
+
+double getEntropy(vector<vector<string>> data, int target);
+
+double getMisclassificationError(vector<vector<string>> data, int target);
+
+vector<vector<vector<string>>> attribute_based_filter(vector<vector<string>> data, int attribute);
+
 void println(string s);
 
 void print(string s);

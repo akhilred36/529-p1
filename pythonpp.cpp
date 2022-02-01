@@ -5,12 +5,13 @@
 #include <algorithm>
 #include <random>
 #include <vector>
-#include <utility> // pair
-#include <stdexcept> // runtime_error
-#include <sstream> // stringstream
+#include <utility>
+#include <stdexcept>
+#include <sstream>
 #include <time.h>
 #include <stdlib.h>
 #include <set>
+#include <math.h>
 
 using namespace std;
 
@@ -139,26 +140,143 @@ vector<vector<vector<string>>> attribute_based_split(vector<vector<string>> data
         }
     }
     return result;
-}   
+}  
+
+// return sub-datasets, each containing homogeneous values for the chosen attribute
+vector<vector<vector<string>>> attribute_based_filter(vector<vector<string>> data, int attribute){
+    vector<vector<vector<string>>> result;
+    vector<string> uniqueValues = getUniqueAttributes(data, attribute);
+    for(int i=0; i<uniqueValues.size(); i++){
+        result.push_back(vector<vector<string>> {});
+    }
+    for(int i=0; i<data.size(); i++){
+        for(int j=0; j<uniqueValues.size(); j++){
+            if((data.at(i).at(attribute)).compare(uniqueValues[j]) == 0){
+                result.at(j).push_back(data.at(i));
+            }
+        }
+    }
+    println(4);
+    return result;
+}
+
+// Get the misclassification error for a dataset, given the attribute's column id, and target's column id
+double getMisclassificationError(vector<vector<string>> data, int target){
+    vector<string> unq_targets = getUniqueAttributes(data, target);
+    vector<double> counts;
+    vector<double> probabilities;
+    int total = data.size();
+    for(int i=0; i<unq_targets.size(); i++){
+        counts.push_back(0);
+    }
+    for(int i=0; i<data.size(); i++){
+        for(int j=0; j<unq_targets.size(); j++){
+            if((data.at(i).at(target)).compare(unq_targets[j]) == 0){
+                counts[j] += 1;
+            }
+        }
+    }
+    for(int i=0; i<counts.size(); i++){
+        probabilities.push_back(counts[i]/total);
+    }
+    double max = *max_element(probabilities.begin(), probabilities.end());
+    return 1-max;
+}
+
+// Get the entropy measure for a dataset, given the attribute's column id, and target's column id
+double getEntropy(vector<vector<string>> data, int target){
+    vector<string> unq_targets = getUniqueAttributes(data, target);
+    vector<double> counts;
+    vector<double> probabilities;
+    int total = data.size();
+    for(int i=0; i<unq_targets.size(); i++){
+        counts.push_back(0);
+    }
+    for(int i=0; i<data.size(); i++){
+        for(int j=0; j<unq_targets.size(); j++){
+            if((data.at(i).at(target)).compare(unq_targets[j]) == 0){
+                counts[j] += 1;
+            }
+        }
+    }
+    for(int i=0; i<counts.size(); i++){
+        probabilities.push_back(counts[i]/total);
+    }
+    double result = 0;
+    for(int i=0; i<probabilities.size(); i++){
+        result += (-1)*(log2(probabilities[i])*probabilities[i]);
+    }
+    return result;
+}
+
+// Get the Gini index for a dataset, given the attribute's column id, and target's column id
+double getGini(vector<vector<string>> data, int target){
+    vector<string> unq_targets = getUniqueAttributes(data, target);
+    vector<double> counts;
+    vector<double> probabilities;
+    int total = data.size();
+    for(int i=0; i<unq_targets.size(); i++){
+        counts.push_back(0);
+    }
+    for(int i=0; i<data.size(); i++){
+        for(int j=0; j<unq_targets.size(); j++){
+            if((data.at(i).at(target)).compare(unq_targets[j]) == 0){
+                counts[j] += 1;
+            }
+        }
+    }
+    for(int i=0; i<counts.size(); i++){
+        probabilities.push_back(counts[i]/total);
+    }
+    double sum = 0;
+    print("Size of probabilities: ");
+    println((int) probabilities.size());
+    for(int i=0; i<probabilities.size(); i++){
+        sum += (probabilities[i] * probabilities[i]);
+    }
+    double result = 1-sum;
+    return result;
+}
 
 // Get the information gain for a dataset, given the attribute's column id, target's column id, and split criterion (gini or entropy)
-//Incomplete
 double getGain(vector<vector<string>> data, string criterion, int attribute, int target){
     double result;
     int data_length = data.size();
     vector<string> classes = getUniqueAttributes(data, target);
-    int length_classes = classes.size();
     vector<string> attributes = getUniqueAttributes(data, attribute);
     int attributes_length = attributes.size();
+    int length_classes = classes.size();
     if(criterion.compare("entropy") == 0){
-        double probabilities[length_classes];
-        int counts[length_classes];
-        for(int i=0; i<length_classes; i++){
-            counts[i] = 0;
+        double impurity_parent = getEntropy(data, target);
+        vector<vector<vector<string>>> subDatasets = attribute_based_filter(data, attribute);
+        double sum;
+        for(int i=0; i<subDatasets.size(); i++){
+            double entropy = getEntropy(subDatasets.at(i), target);
+            sum += ((subDatasets.at(i)).size()/data.size()) * entropy;
         }
+        return impurity_parent - sum;
     }
     else if(criterion.compare("gini") == 0){
-        
+        println("Start Gini");
+        double impurity_parent = getGini(data, target);
+        vector<vector<vector<string>>> subDatasets = attribute_based_filter(data, attribute);
+        double sum;
+        for(int i=0; i<subDatasets.size(); i++){
+            double gini = getGini(subDatasets.at(i), target);
+            sum += ((subDatasets.at(i)).size()/data.size()) * gini;
+        }
+        println(8);
+        return impurity_parent - sum;
+    }
+    else if(criterion.compare("missclassificationError") == 0){
+        double impurity_parent = getMisclassificationError(data, target);
+        vector<vector<vector<string>>> subDatasets = attribute_based_filter(data, attribute);
+        double sum;
+        for(int i=0; i<subDatasets.size(); i++){
+            double me = getMisclassificationError(subDatasets.at(i), target);
+            sum += ((subDatasets.at(i)).size()/data.size()) * me;
+        }
+        return impurity_parent - sum;
     }
     else{
         println("Invalid split criterion. Returning 0");
