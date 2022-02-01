@@ -46,6 +46,8 @@ double getMisclassificationError(vector<vector<string>> data, int target);
 
 vector<vector<vector<string>>> attribute_based_filter(vector<vector<string>> data, int attribute);
 
+int getMaxGain(vector<vector<string>> data, string criterion, int target);
+
 void println(string s);
 
 void print(string s);
