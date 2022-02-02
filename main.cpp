@@ -45,5 +45,14 @@ int main(){
         print(" Length: ");
         println((int) sub_datasets.at(i).size());
     }
+    // double gainGini = getGain(data_split.first, "misclassificationError", 4, 6);
+    // vector<vector<vector<string>>> attribute_split_datasets = attribute_based_filter(data_split.first, 0);
+    // print("Length of subsets: ");
+    // println((int) attribute_split_datasets.size());
+    // int index = getMaxGainIndex(data_split.first, "entropy", 6);
+    // print("Index: ");
+    // println(index);
+    vector<pair<string, vector<vector<string>>>> all_attr_splits = attribute_based_split_labelled_all(data_split.first, 0);
+    println(all_attr_splits.at(3).first);
     return 0;
 }
