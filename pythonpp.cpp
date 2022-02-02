@@ -140,7 +140,39 @@ vector<vector<vector<string>>> attribute_based_split(vector<vector<string>> data
         }
     }
     return result;
-}  
+}
+
+//Returns singular pair of subdataset and attribute label based on the value passed in
+pair<string, vector<vector<string>>> attribute_based_split_labelled(vector<vector<string>> data, int attribute, string value){
+    pair<string, vector<vector<string>>> result;
+    result.first = value;
+    result.second = vector<vector<string>>{};
+    for(int i=0; i<data.size(); i++){
+        if(data.at(i).at(attribute).compare(value) == 0){
+            result.second.push_back(data.at(i));
+        }
+    }
+    return result;
+}
+
+//Returns all pairs of subdatasets based on all possible values of the attribute passed in.
+vector<pair<string, vector<vector<string>>>> attribute_based_split_labelled_all(vector<vector<string>> data, int attribute){
+    vector<pair<string, vector<vector<string>>>> result;
+    vector<string> values = getUniqueAttributes(data, attribute);
+    vector<vector<vector<string>>> all_subdatasets = attribute_based_split(data, attribute, values);
+    for(int i=0; i<values.size(); i++){
+        result.push_back(pair<string, vector<vector<string>>>{});
+        result.at(i).first = values.at(i);
+    }
+    for(int i=0; i<all_subdatasets.size(); i++){
+        for(int j=0; j<values.size(); j++){
+            if(all_subdatasets.at(i).at(0).at(attribute).compare(values.at(j)) == 0){
+                result.at(j).second = all_subdatasets.at(i);
+            }
+        }
+    }
+    return result;
+}
 
 // return sub-datasets, each containing homogeneous values for the chosen attribute
 vector<vector<vector<string>>> attribute_based_filter(vector<vector<string>> data, int attribute){
