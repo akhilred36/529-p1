@@ -52,6 +52,12 @@ vector<pair<string, vector<vector<string>>>> attribute_based_split_labelled_all(
 
 int getMaxGainIndex(vector<vector<string>> data, string criterion, int target);
 
+double chiSquaredLookup(double degreeFreedom, double alpha);
+
+double chiSquaredValue(vector<vector<string>> parentData, int attribute, double confidence, int target);
+
+bool chiSquaredTest(vector<vector<string>> parentData, int attribute, double confidence, int target);
+
 void println(string s);
 
 void print(string s);

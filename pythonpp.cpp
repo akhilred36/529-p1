@@ -316,6 +316,7 @@ double getGain(vector<vector<string>> data, string criterion, int attribute, int
     return result;
 }
 
+//Returns child's index with maximum information gain
 int getMaxGainIndex(vector<vector<string>> data, string criterion, int target){
     vector<double> gains;
     for(int i=0; i<data.at(0).size(); i++){
@@ -327,6 +328,66 @@ int getMaxGainIndex(vector<vector<string>> data, string criterion, int target){
     }
     int maxElementIndex = max_element(gains.begin(),gains.end()) - gains.begin();
     return maxElementIndex;
+}
+
+double chiSquaredLookup(double degreeFreedom, double alpha){
+
+}
+
+//incomplete. still need to calculate expected counts
+double chiSquaredValue(vector<vector<string>> parentData, int attribute, double confidence, int target){
+    vector<string> classes = getUniqueAttributes(parentData, target);
+    vector<string> unqValues = getUniqueAttributes(parentData, attribute);
+    int numClasses = classes.size();
+    int numValues = unqValues.size();
+    vector<pair<string, int>> classCountParent;
+    for(int i=0; i<classes.size(); i++){
+        pair<string, int> temp;
+        temp.first = classes.at(i);
+        temp.second = 0;
+        classCountParent.push_back(temp);
+    }
+    for(int i=0; i<parentData.size(); i++){
+        for(int j=0; j<classCountParent.size(); j++){
+            if(parentData.at(i).at(target).compare(classCountParent.at(j).first) == 0){
+                classCountParent.at(j).second = classCountParent.at(j).second + 1;
+            }
+        }
+    }
+    vector<pair<string, vector<vector<string>>>> splitData_all = attribute_based_split_labelled_all(parentData, attribute);
+    vector<pair<pair<string, string>, double>> expectedCounts;
+    vector<pair<pair<string, string>, double>> realCounts;
+
+    for(int i=0; i<splitData_all.size(); i++){
+        string child_attr = splitData_all.at(i).first;
+        vector<pair<string, vector<vector<string>>>> subSplitData_all = attribute_based_split_labelled_all(splitData_all.at(i).second, target-1);
+        for(int j=0; j<subSplitData_all.size(); j++){
+            pair<string, string> tempStringPair;
+            tempStringPair.first = child_attr;
+            tempStringPair.second = subSplitData_all.at(j).first;
+            pair<pair<string, string>, double> countPair;
+            countPair.first = tempStringPair;
+            countPair.second = (double) 0;
+            expectedCounts.push_back(countPair);
+            realCounts.push_back(countPair);
+        }
+    }
+    for(int i=0; i<splitData_all.size(); i++){
+        string attr = splitData_all.at(i).first;
+        for(int j=0; j<classes.size(); j++){
+            string class_ = classes.at(j);
+            for(int k=0; k<realCounts.size(); k++){
+                if(((realCounts.at(k).first.first).compare(attr) == 0) && ((realCounts.at(k).first.second).compare(class_) == 0)){
+                    realCounts.at(k).second = realCounts.at(k).second + 1;
+                }
+            }
+        }
+    }
+}
+
+bool chiSquaredTest(vector<vector<string>> parentData, int attribute, double confidence, int target){
+    double alpha = 1 - confidence;
+
 }
 
 //Print wrappers - polymorphism for various data types
