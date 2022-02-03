@@ -64,5 +64,16 @@ void println(float s);
 
 void print(float s);
 
+void println(double s);
+
+void print(double s);
+
+void println(short s);
+
+void print(short s);
+
+void println(long s);
+
+void print(long s);
 
 

@@ -346,10 +346,34 @@ void print(int s){
     cout << s;
 }
 
+void println(short s){
+    cout << s << endl;
+}
+
+void print(short s){
+    cout << s;
+}
+
+void println(long s){
+    cout << s << endl;
+}
+
+void print(long s){
+    cout << s;
+}
+
 void println(float s){
     cout << s << endl;
 }
 
 void print(float s){
+    cout << s;
+}
+
+void println(double s){
+    cout << s << endl;
+}
+
+void print(double s){
     cout << s;
 }
