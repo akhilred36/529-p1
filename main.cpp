@@ -54,7 +54,8 @@ int main(){
     println(index);
     vector<pair<string, vector<vector<string>>>> all_attr_splits = attribute_based_split_labelled_all(data_split.first, 0);
     println(all_attr_splits.at(3).first);
-    chiSquaredValue(data_split.first, 0, 0.05, 6);
-    getValueInstances(data_split.first, 0);
+    double chiS = chiSquaredValue(data_split.first, 0, 0.05, 6);
+    print("Chi Squared: ");
+    println(chiS);
     return 0;
 }

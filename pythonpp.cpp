@@ -354,7 +354,7 @@ double chiSquaredLookup(double degreeFreedom, double alpha){
 
 }
 
-//incomplete. still need to calculate expected counts
+//incomplete. need to calculate actual chi squared value
 double chiSquaredValue(vector<vector<string>> parentData, int attribute, double confidence, int target){
     vector<string> classes = getUniqueAttributes(parentData, target);
     vector<string> unqValues = getUniqueAttributes(parentData, attribute);
@@ -447,6 +447,13 @@ double chiSquaredValue(vector<vector<string>> parentData, int attribute, double 
             }
         }
     }
+    double chiSqValue = 0;
+    for(int i=0; i<realCounts.size(); i++){
+        double diff = realCounts.at(i).second - expectedCounts.at(i).second;
+        double ret = (diff*diff)/expectedCounts.at(i).second;
+        chiSqValue += ret;
+    }
+    return chiSqValue;
 }
 
 bool chiSquaredTest(vector<vector<string>> parentData, int attribute, double confidence, int target){
