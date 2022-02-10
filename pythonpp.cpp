@@ -431,7 +431,7 @@ double chiSquaredValue(vector<vector<string>> parentData, int attribute, double 
     for(int i=0; i<parentClassCounts.size(); i++){
         parentTotal += parentClassCounts.at(i).second;
     }
-    vector<pair<string, double>> classProportions;
+    vector<pair<string, double>> classProportions; //store proportions for targets in parent node
     for(int i=0; i<parentClassCounts.size(); i++){
         double prop;
         prop = ((double) parentClassCounts.at(i).second)/((double) parentTotal);
