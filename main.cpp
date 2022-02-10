@@ -54,8 +54,13 @@ int main(){
     println(index);
     vector<pair<string, vector<vector<string>>>> all_attr_splits = attribute_based_split_labelled_all(data_split.first, 0);
     println(all_attr_splits.at(3).first);
-    bool chiTest = chiSquaredTest(data_split.first, 4, 0.95, 6);
+    bool chiTest = chiSquaredTest(data_split.first, 0, 0.95, 6);
+    string result;
+    if(chiTest){
+        result = "pass";
+    }
+    else result = "fail";
     print("Chi Squared Test: ");
-    println(chiTest);
+    println(result);
     return 0;
 }
