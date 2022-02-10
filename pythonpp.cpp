@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <set>
 #include <math.h>
+#include "chisqr.h"
+#include "gamma.h"
 
 using namespace std;
 
@@ -350,12 +352,14 @@ vector<pair<string, int>> getValueInstances(vector<vector<string>> data, int att
     return result;
 }
 
+//Returns p value from chi squared lookup table
 double chiSquaredLookup(double degreeFreedom, double alpha){
-
+    double lookupValue = chisqr(degreeFreedom, alpha);
+    return lookupValue;
 }
 
 //incomplete. need to calculate actual chi squared value
-double chiSquaredValue(vector<vector<string>> parentData, int attribute, double confidence, int target){
+double chiSquaredValue(vector<vector<string>> parentData, int attribute, int target){
     vector<string> classes = getUniqueAttributes(parentData, target);
     vector<string> unqValues = getUniqueAttributes(parentData, attribute);
     int numClasses = classes.size();
@@ -458,7 +462,14 @@ double chiSquaredValue(vector<vector<string>> parentData, int attribute, double 
 
 bool chiSquaredTest(vector<vector<string>> parentData, int attribute, double confidence, int target){
     double alpha = 1 - confidence;
-
+    double X2 = chiSquaredValue(parentData, attribute, target);
+    int dof;
+    vector<string> classes = getUniqueAttributes(parentData, target);
+    vector<string> attr_values = getUniqueAttributes(parentData, attribute);
+    dof = ((int) classes.size() - 1) * ((int) attr_values.size() - 1);
+    double lookup = chiSquaredLookup(dof, alpha);
+    if(X2 > lookup) return true;
+    else return false;
 }
 
 //Print wrappers - polymorphism for various data types
@@ -507,5 +518,13 @@ void println(double s){
 }
 
 void print(double s){
+    cout << s;
+}
+
+void println(bool s){
+    cout << s << endl;
+}
+
+void print(bool s){
     cout << s;
 }

@@ -9,6 +9,8 @@
 #include <sstream> // stringstream
 #include <time.h>
 #include <stdlib.h>
+#include "chisqr.h"
+#include "gamma.h"
 
 using namespace std;
 
@@ -54,7 +56,7 @@ int getMaxGainIndex(vector<vector<string>> data, string criterion, int target);
 
 double chiSquaredLookup(double degreeFreedom, double alpha);
 
-double chiSquaredValue(vector<vector<string>> parentData, int attribute, double confidence, int target);
+double chiSquaredValue(vector<vector<string>> parentData, int attribute, int target);
 
 bool chiSquaredTest(vector<vector<string>> parentData, int attribute, double confidence, int target);
 
@@ -83,5 +85,9 @@ void print(short s);
 void println(long s);
 
 void print(long s);
+
+void print(bool s);
+
+void println(bool s);
 
 
