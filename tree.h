@@ -5,43 +5,31 @@
 #include <utility> // pair
 #include <stdexcept> // runtime_error
 #include <sstream> // stringstream
+#include "node.h"
 
 using namespace std;
 
-namespace tree{
 
-    class Node{
-        //pointers to other nodes
-        //Vector to hold node pointers
-        int id;
-        vector<Node *> children;
-        string hypothesis;
-        vector<string> hypothesis_choices;
-        vector<vector<string>> subdataset;
+class Tree {
 
-        // constructor 
-        // create/append child
-        // Utilize custom dataframe
-    };
+    public:
+        int node_count;
+        int depth;
 
-    // creates and trains decision tree 
-    void train(vector<vector<string>> data){
-        vector<pair<string, double>> impurities;
+        Tree(vector<vector<string>> data);
+        Tree(string csv_file);
+        ~Tree();
 
-    }
-
-    // test performance (accuracy, precision, AUC)
-
-    // prune tree
-
-    // create/train RF/ensemble
-
-    // test RF
-
-    // get gini index
-
-    // Testing frameworks
+        void train();
+        // string test();
+        string predict(vector<string> features);
+        void setSplitCriterion(string criterion);
 
 
-}
-
+    private:
+        Node* root;
+        vector<Node *> nodes;
+        Node* returnCorrectChild(Node* parent, string targetLabel);
+        
+    
+};
