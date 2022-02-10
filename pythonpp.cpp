@@ -393,19 +393,6 @@ double chiSquaredValue(vector<vector<string>> parentData, int attribute, double 
             realCounts.push_back(countPair);
         }
     }
-    // //Store real counts #1
-    // for(int i=0; i<splitData_all.size(); i++){
-    //     string attr = splitData_all.at(i).first;
-    //     for(int j=0; j<classes.size(); j++){
-    //         string class_ = classes.at(j);
-    //         for(int k=0; k<realCounts.size(); k++){
-    //             if(((realCounts.at(k).first.first).compare(attr) == 0) && ((realCounts.at(k).first.second).compare(class_) == 0)){
-    //                 realCounts.at(k).second = realCounts.at(k).second + 1;
-    //             }
-    //         }
-    //     }
-    // }
-
     //Store real counts
     for(int i=0; i<splitData_all.size(); i++){
         string attr = splitData_all.at(i).first;
@@ -443,11 +430,19 @@ double chiSquaredValue(vector<vector<string>> parentData, int attribute, double 
     
     for(int i=0; i<splitData_all.size(); i++){
         string attr = splitData_all.at(i).first;
+        int count = splitData_all.at(i).second.size();
         for(int j=0; j<classes.size(); j++){
             string class_ = classes.at(j);
             for(int k=0; k<expectedCounts.size(); k++){
                 if(((expectedCounts.at(k).first.first).compare(attr) == 0) && ((expectedCounts.at(k).first.second).compare(class_) == 0)){
-                    expectedCounts.at(k).second = realCounts.at(k).second + 1;
+                    double proportion = 0;
+                    for(int m=0; m<classProportions.size(); m++){
+                        if(classProportions.at(m).first.compare(class_) == 0){
+                            proportion = classProportions.at(m).second;
+                        }
+                    }
+                    double value = (double) proportion * (double) count;
+                    expectedCounts.at(k).second = value;
                 }
             }
         }
