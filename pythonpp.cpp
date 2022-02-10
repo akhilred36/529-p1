@@ -324,8 +324,8 @@ int getMaxGainIndex(vector<vector<string>> data, string criterion, int target){
     for(int i=0; i<data.at(0).size(); i++){
         if(i != target){
             gains.push_back(getGain(data, criterion, i, target));
-            print("Gain: ");
-            println((float) gains[i]);
+            //print("Gain: ");
+            //println((float) gains[i]);
         }
     }
     int maxElementIndex = max_element(gains.begin(),gains.end()) - gains.begin();
@@ -528,3 +528,4 @@ void println(bool s){
 void print(bool s){
     cout << s;
 }
+
