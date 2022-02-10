@@ -58,6 +58,8 @@ double chiSquaredValue(vector<vector<string>> parentData, int attribute, double 
 
 bool chiSquaredTest(vector<vector<string>> parentData, int attribute, double confidence, int target);
 
+vector<pair<string, int>> getValueInstances(vector<vector<string>> data, int attribute);
+
 void println(string s);
 
 void print(string s);

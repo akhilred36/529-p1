@@ -330,6 +330,26 @@ int getMaxGainIndex(vector<vector<string>> data, string criterion, int target){
     return maxElementIndex;
 }
 
+//Return number of instances for each value in an attribute/target
+vector<pair<string, int>> getValueInstances(vector<vector<string>> data, int attribute){
+    vector<pair<string, int>> result;
+    vector<string> unqValues = getUniqueAttributes(data, attribute);
+    for(int i=0; i<unqValues.size(); i++){
+        pair<string, int> temp;
+        temp.first = unqValues.at(i);
+        temp.second = 0;
+        result.push_back(temp);
+    }
+    for(int i=0; i<data.size(); i++){
+        for(int j=0; j<result.size(); j++){
+            if((data.at(i).at(attribute)).compare(result.at(j).first) == 0){
+                result.at(j).second = result.at(j).second + 1;
+            }
+        }
+    }
+    return result;
+}
+
 double chiSquaredLookup(double degreeFreedom, double alpha){
 
 }
@@ -341,6 +361,7 @@ double chiSquaredValue(vector<vector<string>> parentData, int attribute, double 
     int numClasses = classes.size();
     int numValues = unqValues.size();
     vector<pair<string, int>> classCountParent;
+    //Count class instances in the parent node
     for(int i=0; i<classes.size(); i++){
         pair<string, int> temp;
         temp.first = classes.at(i);
@@ -354,13 +375,13 @@ double chiSquaredValue(vector<vector<string>> parentData, int attribute, double 
             }
         }
     }
+    //Store real counts and expected counts for each child node
     vector<pair<string, vector<vector<string>>>> splitData_all = attribute_based_split_labelled_all(parentData, attribute);
     vector<pair<pair<string, string>, double>> expectedCounts;
     vector<pair<pair<string, string>, double>> realCounts;
-
     for(int i=0; i<splitData_all.size(); i++){
         string child_attr = splitData_all.at(i).first;
-        vector<pair<string, vector<vector<string>>>> subSplitData_all = attribute_based_split_labelled_all(splitData_all.at(i).second, target-1);
+        vector<pair<string, vector<vector<string>>>> subSplitData_all = attribute_based_split_labelled_all(splitData_all.at(i).second, target);
         for(int j=0; j<subSplitData_all.size(); j++){
             pair<string, string> tempStringPair;
             tempStringPair.first = child_attr;
@@ -372,13 +393,61 @@ double chiSquaredValue(vector<vector<string>> parentData, int attribute, double 
             realCounts.push_back(countPair);
         }
     }
+    // //Store real counts #1
+    // for(int i=0; i<splitData_all.size(); i++){
+    //     string attr = splitData_all.at(i).first;
+    //     for(int j=0; j<classes.size(); j++){
+    //         string class_ = classes.at(j);
+    //         for(int k=0; k<realCounts.size(); k++){
+    //             if(((realCounts.at(k).first.first).compare(attr) == 0) && ((realCounts.at(k).first.second).compare(class_) == 0)){
+    //                 realCounts.at(k).second = realCounts.at(k).second + 1;
+    //             }
+    //         }
+    //     }
+    // }
+
+    //Store real counts
+    for(int i=0; i<splitData_all.size(); i++){
+        string attr = splitData_all.at(i).first;
+        int count = (int) splitData_all.at(i).second.size();
+        for(int j=0; j<splitData_all.at(i).second.size(); j++){
+            vector<pair<string, vector<vector<string>>>> subSplitData_all = attribute_based_split_labelled_all(splitData_all.at(i).second, target);
+            for(int k=0; k<subSplitData_all.size(); k++){
+                string class_ = subSplitData_all.at(k).first;
+                for(int m=0; m<realCounts.size(); m++){
+                    if((realCounts.at(m).first.first).compare(attr) == 0){
+                        if((realCounts.at(m).first.second).compare(class_) == 0){
+                            realCounts.at(m).second = realCounts.at(m).second + 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    //Calculate expected counts
+    vector<pair<string, int>> parentClassCounts = getValueInstances(parentData, target);
+    int parentTotal = 0;
+    for(int i=0; i<parentClassCounts.size(); i++){
+        parentTotal += parentClassCounts.at(i).second;
+    }
+    vector<pair<string, double>> classProportions;
+    for(int i=0; i<parentClassCounts.size(); i++){
+        double prop;
+        prop = ((double) parentClassCounts.at(i).second)/((double) parentTotal);
+        pair<string, double> temp;
+        temp.first = parentClassCounts.at(i).first;
+        temp.second = prop;
+        classProportions.push_back(temp); 
+    }
+    
     for(int i=0; i<splitData_all.size(); i++){
         string attr = splitData_all.at(i).first;
         for(int j=0; j<classes.size(); j++){
             string class_ = classes.at(j);
-            for(int k=0; k<realCounts.size(); k++){
-                if(((realCounts.at(k).first.first).compare(attr) == 0) && ((realCounts.at(k).first.second).compare(class_) == 0)){
-                    realCounts.at(k).second = realCounts.at(k).second + 1;
+            for(int k=0; k<expectedCounts.size(); k++){
+                if(((expectedCounts.at(k).first.first).compare(attr) == 0) && ((expectedCounts.at(k).first.second).compare(class_) == 0)){
+                    expectedCounts.at(k).second = realCounts.at(k).second + 1;
                 }
             }
         }
