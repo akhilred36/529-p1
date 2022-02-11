@@ -358,7 +358,7 @@ double chiSquaredLookup(double degreeFreedom, double alpha){
     return lookupValue;
 }
 
-//incomplete. need to calculate actual chi squared value
+//Computes X^2 value for the chosen split attribute
 double chiSquaredValue(vector<vector<string>> parentData, int attribute, int target){
     vector<string> classes = getUniqueAttributes(parentData, target);
     vector<string> unqValues = getUniqueAttributes(parentData, attribute);
@@ -460,6 +460,7 @@ double chiSquaredValue(vector<vector<string>> parentData, int attribute, int tar
     return chiSqValue;
 }
 
+//Returns true if the chosen attribute based on the dataset passes the chi squared test
 bool chiSquaredTest(vector<vector<string>> parentData, int attribute, double confidence, int target){
     double alpha = 1 - confidence;
     double X2 = chiSquaredValue(parentData, attribute, target);
@@ -470,6 +471,31 @@ bool chiSquaredTest(vector<vector<string>> parentData, int attribute, double con
     double lookup = chiSquaredLookup(dof, alpha);
     if(X2 > lookup) return true;
     else return false;
+}
+
+//Return vector of vector of attributes that have randomly sampled (with replacement) features
+vector<vector<int>> bagFeaturesIndices(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize){
+    vector<vector<int>> selectedAttributes;
+    vector<int> in;
+    for(int i=0; i<dataset.at(0).size(); i++){
+        if(i != target) in.push_back(i);
+    }
+    for(int i=0; i<numBags; i++){
+        vector<int> out;
+        srand(time(NULL));
+        int diff = ((int) in.size()) - minFeatureSize;
+        int num = rand() % numBags + diff;
+        std::sample(in.begin(), in.end(), std::back_inserter(out),
+                 num, std::mt19937{std::random_device{}()});
+        selectedAttributes.push_back(out);
+    }
+    return selectedAttributes;
+}
+
+//Return vector of datasets that have randomly sampled (with replacement) features
+//Incomplete
+vector<vector<vector<string>>> bagFeatures(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize){
+    
 }
 
 //Print wrappers - polymorphism for various data types
