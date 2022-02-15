@@ -495,7 +495,22 @@ vector<vector<int>> bagFeaturesIndices(vector<vector<string>> dataset, int targe
 //Return vector of datasets that have randomly sampled (with replacement) features
 //Incomplete
 vector<vector<vector<string>>> bagFeatures(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize){
-    
+    vector<vector<vector<string>>> result;
+    vector<vector<int>> baggedIndices = bagFeaturesIndices(dataset, target, numBags, minFeatureSize);
+    for(int i=0; i<baggedIndices.size(); i++){
+        vector<vector<string>> temp;
+        result.push_back(temp);
+    }
+    for(int i=0; i<dataset.size(); i++){
+        for(int j=0; j<baggedIndices.size(); j++){
+            vector<string> temp;
+            for(int k=0; k<baggedIndices.at(j).size(); k++){
+                temp.push_back(dataset.at(i).at(baggedIndices.at(j).at(k)));
+            }
+            result.at(j).push_back(temp);
+        }
+    }
+    return result;
 }
 
 //Print wrappers - polymorphism for various data types
