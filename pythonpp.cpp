@@ -481,12 +481,10 @@ vector<vector<int>> bagFeaturesIndices(vector<vector<string>> dataset, int targe
         vector<int> out;
         srand(time(NULL));
         int diff = ((int) in.size()) - minFeatureSize;
-        int num = rand() % minFeatureSize + diff;
-        // auto rng = default_random_engine {};
-        // shuffle(in.begin(), in.end(), rng);
-
-        // std::sample(in.begin(), in.end(), std::back_inserter(out),
-        //          num, std::mt19937{std::random_device{}()});
+        int num = rand() % diff + minFeatureSize;
+        auto rng = default_random_engine {};
+        shuffle(in.begin(), in.end(), rng);
+        std::sample(in.begin(), in.end(), std::back_inserter(out), num, std::mt19937{std::random_device{}()});
         selectedAttributes.push_back(out);
     }
     return selectedAttributes;
@@ -521,7 +519,6 @@ void println(string s){
 void print(string s){
     cout << s;
 }
-
 
 void println(int s){
     cout << s << endl;
