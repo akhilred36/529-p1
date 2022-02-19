@@ -105,7 +105,6 @@ vector<vector<string>> shuffleDataFrame(vector<vector<string>> data){
 pair<vector<vector<string>>, vector<vector<string>>> train_test_split(vector<vector<string>> data, float trainRatio){
     pair<vector<vector<string>>, vector<vector<string>>> result;
     int lastTrainIdx = (int) (trainRatio * (float) data.size());
-    println(lastTrainIdx);
     for(int i=0; i<data.size(); i++){
         if(i < lastTrainIdx){
             result.first.push_back(data.at(i));
@@ -312,7 +311,7 @@ double getGain(vector<vector<string>> data, string criterion, int attribute, int
         return result;
     }
     else{
-        println("Invalid split criterion. Returning 0");
+        cout << "Invalid split criterion. Returning 0" << endl;
         return 0;
     }
     return result;
@@ -324,8 +323,6 @@ int getMaxGainIndex(vector<vector<string>> data, string criterion, int target){
     for(int i=0; i<data.at(0).size(); i++){
         if(i != target){
             gains.push_back(getGain(data, criterion, i, target));
-            //print("Gain: ");
-            //println((float) gains[i]);
         }
     }
     int maxElementIndex = max_element(gains.begin(),gains.end()) - gains.begin();
@@ -484,9 +481,12 @@ vector<vector<int>> bagFeaturesIndices(vector<vector<string>> dataset, int targe
         vector<int> out;
         srand(time(NULL));
         int diff = ((int) in.size()) - minFeatureSize;
-        int num = rand() % numBags + diff;
-        std::sample(in.begin(), in.end(), std::back_inserter(out),
-                 num, std::mt19937{std::random_device{}()});
+        int num = rand() % minFeatureSize + diff;
+        // auto rng = default_random_engine {};
+        // shuffle(in.begin(), in.end(), rng);
+
+        // std::sample(in.begin(), in.end(), std::back_inserter(out),
+        //          num, std::mt19937{std::random_device{}()});
         selectedAttributes.push_back(out);
     }
     return selectedAttributes;
@@ -521,6 +521,7 @@ void println(string s){
 void print(string s){
     cout << s;
 }
+
 
 void println(int s){
     cout << s << endl;
