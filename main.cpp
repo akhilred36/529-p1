@@ -57,11 +57,5 @@ int main(){
     // }
     // else result = "fail";
     // cout << "Chi Squared Test: " << result << endl;
-    vector<vector<vector<string>>> baggedDatasets = bagFeatures(data_split.first, 6, 30, 2);
-    cout << "Length of bagged datasets: ";
-    cout << (int) baggedDatasets.size() << endl;
-    for(int i=0; i<baggedDatasets.size(); i++){
-        cout << "Bagged Dataset " << i << " Size: " << (int) baggedDatasets.at(i).at(0).size() << endl;
-    }
     return 0;
 }

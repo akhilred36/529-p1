@@ -5,6 +5,7 @@
 #include <utility> // pair
 #include <stdexcept> // runtime_error
 #include "tree.h"
+#include "pythonpp.h"
 
 class Forest{
     public:
@@ -13,9 +14,8 @@ class Forest{
         string criterion;
         vector<vector<vector<string>>> datasets;
 
-        Forest(vector<vector<string>> data);
-        Forest(vector<vector<vector<string>>> baggedDatasets);
-        Forest(vector<vector<vector<string>>> baggedDatasets, string pruneMethod, string criterion);
+        Forest(vector<vector<string>> data, int target, int numBags, int minFeatureSize, string pruneMethod, string splitCriterion);
+        Forest(vector<vector<string>> data, int target, int numBags, int minFeatureSize);
         ~Forest();
 
         void train();
@@ -25,4 +25,6 @@ class Forest{
 
     private:
         vector<Tree> trees;
+        vector<vector<int>> datasetIndices;
+        vector<vector<vector<string>>> datasets;
 };

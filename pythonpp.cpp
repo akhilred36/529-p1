@@ -470,7 +470,7 @@ bool chiSquaredTest(vector<vector<string>> parentData, int attribute, double con
     else return false;
 }
 
-//Return vector of vector of attributes that have randomly sampled (with replacement) features
+//Return vector of vector of attributes that have randomly sampled (with replacement) features. Includes target
 vector<vector<int>> bagFeaturesIndices(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize){
     vector<vector<int>> selectedAttributes;
     vector<int> in;
@@ -484,6 +484,7 @@ vector<vector<int>> bagFeaturesIndices(vector<vector<string>> dataset, int targe
         int num = rand() % diff + minFeatureSize;
         cout << "Min Feature Size: " << minFeatureSize << ", Diff: " << diff << ", randNum: " << num << endl;
         std::sample(in.begin(), in.end(), std::back_inserter(out), num, std::mt19937{std::random_device{}()});
+        out.push_back(target);
         selectedAttributes.push_back(out);
     }
     return selectedAttributes;
@@ -491,9 +492,8 @@ vector<vector<int>> bagFeaturesIndices(vector<vector<string>> dataset, int targe
 
 //Return vector of datasets that have randomly sampled (with replacement) features
 //Incomplete
-vector<vector<vector<string>>> bagFeatures(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize){
+vector<vector<vector<string>>> bagFeatures(vector<vector<string>> dataset, vector<vector<int>> baggedIndices){
     vector<vector<vector<string>>> result;
-    vector<vector<int>> baggedIndices = bagFeaturesIndices(dataset, target, numBags, minFeatureSize);
     for(int i=0; i<baggedIndices.size(); i++){
         vector<vector<string>> temp;
         result.push_back(temp);
