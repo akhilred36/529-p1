@@ -10,6 +10,12 @@
 
 Forest::Forest(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize, string pruneMethod, string splitCriterion){
     datasetIndices = bagFeaturesIndices(dataset, target, numBags, minFeatureSize);
+    datasetIndices = bagFeaturesIndices(dataset, target, numBags, minFeatureSize);
+    datasets = bagFeatures(dataset, datasetIndices);
+    for(int i=0; i<numBags; i++){
+        trees.push_back(Tree(datasets.at(i)));
+        trees.at(i).setSplitCriterion(splitCriterion);
+    }
 }
 
 Forest::Forest(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize){
