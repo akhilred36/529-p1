@@ -2,9 +2,9 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include <utility> // pair
-#include <stdexcept> // runtime_error
-#include <sstream> // stringstream
+#include <utility>       // pair
+#include <stdexcept>    // runtime_error
+#include <sstream>     // stringstream
 #include "pythonpp.h"
 
 using namespace std;
@@ -20,16 +20,24 @@ class Node{
     public:
         //Vector to hold node pointers
         static int id_count;
+        static int max_depth;
         static string criterion;
+        static double datasetPurity;
+        static double confidence;
+        static bool chiSquared;
+
         int id_num;
         int target;
-        
+        int level;
         Node * parent;
+        Node * mostDiverseChild;
         double gain;
         vector<Node *> children;
         int attribute;
         struct LabeledDataset dataset;
         bool isLeaf;
+        string majorityLabel;
+        vector<string> uniqueAttributes;
 
 
         Node(string label, vector<vector<string>> data);
@@ -45,33 +53,13 @@ class Node{
 
         string getLabel();
 
+        void setLevel();
+
+
     private:
         vector<LabeledDataset> splitDataset(LabeledDataset data);
 
-        bool dataSetPurity(vector<vector<string>> data, int target);
+        double dataSetPurityTest();
 
 };
 
-
-// constructor 
-// create/append child
-// Utilize custom dataframe
-
-
-// creates and trains decision tree 
-// void train(vector<vector<string>> data){
-// vector<pair<string, double>> impurities;
-
-// }
-
-// test performance (accuracy, precision, AUC)
-
-// prune tree
-
-// create/train RF/ensemble
-
-// test RF
-
-// get gini index
-
-// Testing frameworks
