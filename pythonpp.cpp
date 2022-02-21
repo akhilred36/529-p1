@@ -482,7 +482,6 @@ vector<vector<int>> bagFeaturesIndices(vector<vector<string>> dataset, int targe
         srand(i);
         int diff = ((int) in.size()) - minFeatureSize;
         int num = rand() % diff + minFeatureSize;
-        cout << "Min Feature Size: " << minFeatureSize << ", Diff: " << diff << ", randNum: " << num << endl;
         std::sample(in.begin(), in.end(), std::back_inserter(out), num, std::mt19937{std::random_device{}()});
         out.push_back(target);
         selectedAttributes.push_back(out);

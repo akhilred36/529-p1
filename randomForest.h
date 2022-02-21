@@ -12,7 +12,6 @@ class Forest{
         int numTrees;
         string pruneMethod; //Valid values are "X2inBuild", "purityThreshold"
         string criterion;
-        vector<vector<vector<string>>> datasets;
 
         Forest(vector<vector<string>> data, int target, int numBags, int minFeatureSize, string pruneMethod, string splitCriterion);
         Forest(vector<vector<string>> data, int target, int numBags, int minFeatureSize);
@@ -24,7 +23,7 @@ class Forest{
         string predict(vector<string> features);
 
     private:
-        vector<Tree> trees;
+        vector<Tree *> trees;
         vector<vector<int>> datasetIndices;
         vector<vector<vector<string>>> datasets;
 };
