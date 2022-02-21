@@ -10,7 +10,7 @@
 class Forest{
     public:
         int numTrees;
-        string pruneMethod;
+        string pruneMethod; //Valid values are "X2inBuild", "purityThreshold"
         string criterion;
         vector<vector<vector<string>>> datasets;
 
