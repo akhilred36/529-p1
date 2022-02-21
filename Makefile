@@ -12,7 +12,7 @@ test_node:
 	./testNode && rm testNode
 
 tree:
-	g++ -o testTree tree.cpp tree.h node.cpp node.h pythonpp.cpp pythonpp.h  
+	g++ -o testTree tree.cpp tree.h node.cpp node.h pythonpp.cpp pythonpp.h chisqr.c chisqr.h gamma.c gamma.h
 
 test_tree:
 	./testTree && rm testTree
