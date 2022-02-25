@@ -4,7 +4,7 @@
 #include <vector>
 #include <utility>  
 #include <stdexcept>  
-#include <map>
+#include <unordered_map>
 #include "node.h"
 
 using namespace std;
@@ -59,7 +59,7 @@ Node::~Node() {
 
 // Returns the purity of the dataset. i.e. the percentage that the majority class takes up in the dataset
 double Node::dataSetPurityTest() {
-    map<string, int> labelCount;
+    unordered_map<string, int> labelCount;
 
     for (int i = 0; i < uniqueAttributes.size(); i++) {
         labelCount[uniqueAttributes.at(i)] = 0;

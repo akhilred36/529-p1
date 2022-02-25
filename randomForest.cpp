@@ -24,8 +24,8 @@ Forest::Forest(vector<vector<string>> dataset, int target, int numBags, int minF
     for(int i=0; i<numBags; i++){
         trees.push_back(new Tree(datasets.at(i)));
         trees.at(i)->setSplitCriterion("gini");
-        // trees.at(i)->toggleChiSquared();
-        // trees.at(i)->setConfidence(0.9);
+        trees.at(i)->toggleChiSquared();
+        trees.at(i)->setConfidence(0.95);
     }
 }
 
@@ -127,23 +127,18 @@ int main(){
     vector<vector<string>> data = read_csv("train_refined.csv");
     vector<vector<string>> train = shuffleDataFrame(seperateHeader(data).second);
     int target = (int) train.at(0).size() - 1;
-    Forest rf = Forest(train, target, 59, 3);
+    Forest rf = Forest(train, target, 29, 3);
     rf.train();
 
     vector<vector<string>> X = seperateTargets(seperateHeader(read_csv("test_refined.csv")).second, 0).first;
 
     ofstream myfile;
-    ofstream myfile2;
-    myfile.open ("submission_Endline.csv");
-    myfile2.open ("submission_noEndline.csv");
+    myfile.open ("submission_Endline_X2_95.csv");
     myfile << "id,class \n";
-    myfile2 << "id,class \n";
     for (int i = 0; i < (int) X.size(); i++) {
         string prediction = rf.predict(X.at(i)); 
         myfile << i+2001 << "," << prediction << endl;
-        myfile2 << i+2001 << "," << prediction << ",";
     } 
     myfile.close();
-    myfile2.close();
     return 0;
 }

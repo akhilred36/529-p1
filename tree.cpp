@@ -4,7 +4,7 @@
 #include <vector>
 #include <utility> // pair
 #include <stdexcept> // runtime_error
-#include <map>
+#include <unordered_map>
 #include "tree.h"
 
 
