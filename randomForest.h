@@ -13,7 +13,7 @@ class Forest{
         string pruneMethod; //Valid values are "X2inBuild", "purityThreshold"
         string criterion;
 
-        Forest(vector<vector<string>> data, int target, int numBags, int minFeatureSize, string pruneMethod, string splitCriterion);
+        Forest(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize, string pruneMethod, string splitCriterion, double confidence);
         Forest(vector<vector<string>> data, int target, int numBags, int minFeatureSize);
         ~Forest();
 

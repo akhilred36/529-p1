@@ -7,7 +7,7 @@
 #include "randomForest.h"
 #include "pythonpp.h"
 
-Forest::Forest(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize, string pruneMethod, string splitCriterion){
+Forest::Forest(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize, string pruneMethod, string splitCriterion, double confidence){
     datasetIndices = bagFeaturesIndices(dataset, target, numBags, minFeatureSize);
     setSplitCriterion(splitCriterion);
     setPruneMethod(pruneMethod);
@@ -15,6 +15,10 @@ Forest::Forest(vector<vector<string>> dataset, int target, int numBags, int minF
     for(int i=0; i<numBags; i++){
         trees.push_back(new Tree(datasets.at(i)));
         trees.at(i)->setSplitCriterion(splitCriterion);
+        if(pruneMethod.compare("chiSquared") == 0){
+            trees.at(i)->toggleChiSquared();
+            trees.at(i)->setConfidence(confidence);
+        }
     }
 }
 
@@ -93,52 +97,60 @@ Forest::~Forest(){
     }
 }
 
-int main(){
+int main(int argc, char* argv[]){
+
+    if(argc < 6){
+        cerr << "Usage: " << argv[0] << " <splitCriterion> <numBags> <minAttrs> <pruneMethod> <confidence>" << endl;
+        return 0;
+    }
+    cout << "--------------------------------------------------------------------------------" << endl;
+    cout << "Using " << argv[1] << ", " << argv[2] << " bags, " << argv[3] << " min attrs, " << argv[4] << ", confidence " << argv[5] << endl;
     //For known dataset testing : 
-    // double splitPercent = 0.8;
+    double splitPercent = 0.8;
+    vector<vector<string>> data = read_csv("train_refined.csv");
+
+    pair<vector<vector<string>>, vector<vector<string>>> train_test = train_test_split(shuffleDataFrame(seperateHeader(data).second),splitPercent);
+
+    vector<vector<string>> train = train_test.first;
+    vector<vector<string>> test = train_test.second;
+    int target = (int) train.at(0).size() - 1;
+    //(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize, string pruneMethod, string splitCriterion, double confidence)
+    Forest rf = Forest(train, target, (int) atoi(argv[2]), (int) atoi(argv[3]), argv[4], argv[1], (double) atof(argv[5]));
+    rf.train();
+
+    pair<vector<vector<string>>, vector<string>> feature_label = seperateTargets(test, target);
+    vector<vector<string>> X = feature_label.first;
+    vector<string> Y = feature_label.second;
+    int total = 0;
+    int correct = 0;
+    string prediction;
+    for (int i = 0; i < (int) X.size(); i++) {
+        prediction = rf.predict(X.at(i));
+        if (prediction.compare(Y.at(i)) == 0) {
+            correct = correct + 1;
+        }
+
+        total = total + 1;
+    }  
+
+    cout << "Acc.\n" << "------------------------------\n" << "Correct: " << correct << endl << "Total: " << total << endl << "Percent: " << (double) (100 * ((double) correct / (double) total)) << "%" << endl << endl;
+
+    //For unknown prediction generation:
     // vector<vector<string>> data = read_csv("train_refined.csv");
-
-    // pair<vector<vector<string>>, vector<vector<string>>> train_test = train_test_split(shuffleDataFrame(seperateHeader(data).second),splitPercent);
-
-    // vector<vector<string>> train = train_test.first;
-    // vector<vector<string>> test = train_test.second;
+    // vector<vector<string>> train = shuffleDataFrame(seperateHeader(data).second);
     // int target = (int) train.at(0).size() - 1;
     // Forest rf = Forest(train, target, 29, 3);
     // rf.train();
 
-    // pair<vector<vector<string>>, vector<string>> feature_label = seperateTargets(test, target);
-    // vector<vector<string>> X = feature_label.first;
-    // vector<string> Y = feature_label.second;
-    // int total = 0;
-    // int correct = 0;
-    // string prediction;
+    // vector<vector<string>> X = seperateTargets(seperateHeader(read_csv("test_refined.csv")).second, 0).first;
+
+    // ofstream myfile;
+    // myfile.open ("submission_Endline_X2_95.csv");
+    // myfile << "id,class \n";
     // for (int i = 0; i < (int) X.size(); i++) {
-    //     prediction = rf.predict(X.at(i));
-    //     if (prediction.compare(Y.at(i)) == 0) {
-    //         correct = correct + 1;
-    //     }
-
-    //     total = total + 1;
-    // }  
-
-    // cout << "Acc.\n" << "------------------------------\n" << "Correct: " << correct << endl << "Total: " << total << endl << "Percent: " << (double) (100 * ((double) correct / (double) total)) << "%" << endl << endl;
-
-    //For unknown prediction generation:
-    vector<vector<string>> data = read_csv("train_refined.csv");
-    vector<vector<string>> train = shuffleDataFrame(seperateHeader(data).second);
-    int target = (int) train.at(0).size() - 1;
-    Forest rf = Forest(train, target, 29, 3);
-    rf.train();
-
-    vector<vector<string>> X = seperateTargets(seperateHeader(read_csv("test_refined.csv")).second, 0).first;
-
-    ofstream myfile;
-    myfile.open ("submission_Endline_X2_95.csv");
-    myfile << "id,class \n";
-    for (int i = 0; i < (int) X.size(); i++) {
-        string prediction = rf.predict(X.at(i)); 
-        myfile << i+2001 << "," << prediction << endl;
-    } 
-    myfile.close();
+    //     string prediction = rf.predict(X.at(i)); 
+    //     myfile << i+2001 << "," << prediction << endl;
+    // } 
+    // myfile.close();
     return 0;
 }
