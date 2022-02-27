@@ -5,43 +5,42 @@
 #include <utility> // pair
 #include <stdexcept> // runtime_error
 #include <sstream> // stringstream
+#include "node.h"
 
 using namespace std;
 
-namespace tree{
 
-    class Node{
-        //pointers to other nodes
-        //Vector to hold node pointers
-        int id;
-        vector<Node *> children;
-        string hypothesis;
-        vector<string> hypothesis_choices;
-        vector<vector<string>> subdataset;
+class Tree {
 
-        // constructor 
-        // create/append child
-        // Utilize custom dataframe
-    };
-
-    // creates and trains decision tree 
-    void train(vector<vector<string>> data){
-        vector<pair<string, double>> impurities;
-
-    }
-
-    // test performance (accuracy, precision, AUC)
-
-    // prune tree
-
-    // create/train RF/ensemble
-
-    // test RF
-
-    // get gini index
-
-    // Testing frameworks
+    public:
+        int node_count;
+        int depth = 0;
+        vector<vector<Node *>> paths; 
 
 
-}
+        Tree(vector<vector<string>> data);
+        Tree(string csv_file);
+        ~Tree();
 
+        void train();
+        string predict(vector<string> features);
+        void setSplitCriterion(string criterion);
+        void setPurityThreshold(double purity);
+        void toggleChiSquared();
+        void setConfidence(double con);
+        void setMaxDepth(int md);
+        void test(vector<vector<string>> test, int target_column);
+        void testUnseen(vector<vector<string>> test);
+
+    private:
+        Node* root;
+        vector<Node *> nodes;
+        Node* returnCorrectChild(Node* parent, string targetLabel);
+        void buildPaths(vector<vector<Node *>> &paths);
+        
+        
+    
+};
+
+void runHiddenDataset();
+void runKnownDataset();
