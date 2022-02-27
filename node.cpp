@@ -4,7 +4,7 @@
 #include <vector>
 #include <utility>  
 #include <stdexcept>  
-#include <set>
+#include <unordered_map>
 #include "node.h"
 
 using namespace std;
@@ -18,8 +18,12 @@ Node::Node(string label, vector<vector<string>> data) {
     attribute = getMaxGainIndex(data, criterion, target);
     gain = getGain(data, criterion, attribute, target); 
     isLeaf = false;
+    parent = NULL;
+    level = 0;
+    uniqueAttributes = getUniqueAttributes(data, target);
 
-    id_count = id_count + 1;                                     // Increment static variable
+
+    id_count = id_count + 1;    // Increment static variable
 
 }
 
@@ -31,15 +35,19 @@ Node::Node(LabeledDataset data) {
     isLeaf = false;
     attribute = getMaxGainIndex(data.data, criterion, target);
     gain = getGain(data.data, criterion, attribute, target);
+    uniqueAttributes = getUniqueAttributes(data.data, target);
 
-    id_count++;                                                  // Increment static variable
+    id_count++;    // Increment static variable
+    
 
     // If there are no more dvisions to make to the dataset, node is a leaf
-    if ((getUniqueAttributes(data.data, target).size() == 1) || gain < 0.2) {
+    if (dataSetPurityTest() >= datasetPurity) {  
         isLeaf = true;
     }
 
 }
+
+
 
 Node::~Node() {
     // delete your children
@@ -49,30 +57,82 @@ Node::~Node() {
 
 }
 
-bool vector<string> dataSetPurity(vector<vector<string>> data, int target) {
-    vector<string>
+// Returns the purity of the dataset. i.e. the percentage that the majority class takes up in the dataset
+double Node::dataSetPurityTest() {
+    unordered_map<string, int> labelCount;
+
+    for (int i = 0; i < uniqueAttributes.size(); i++) {
+        labelCount[uniqueAttributes.at(i)] = 0;
+    }
+
+    for (int i = 0; i < dataset.data.size(); i++) {
+        labelCount[dataset.data.at(i).at(target)] = labelCount[dataset.data.at(i).at(target)] + 1;
+    }
+
+    double total = (double) dataset.data.size();
+    double maxPercentage = 0.0;
+
+    double candidatePercentage;
+    for (int i = 0; i < uniqueAttributes.size(); i++) {
+        candidatePercentage = labelCount[uniqueAttributes.at(i)] / total;
+        // print("Candidate %: ");
+        // println((float) candidatePercentage);
+        if (candidatePercentage > maxPercentage) {
+            maxPercentage = candidatePercentage;
+            majorityLabel = uniqueAttributes.at(i);
+        }
+    }
+
+    return maxPercentage;
 }
 
-
+// Splits current nodes dataset and uses the sub datasets to create child nodes
 void Node::initializeChildren() {
     if (isLeaf) {
         return;
     }
 
+    if (level >= max_depth) {
+        return;
+    }
+
+    // Are we using chi squared test
+    if (chiSquared) {
+        if (!chiSquaredTest(dataset.data, attribute, confidence, target)) {  
+            isLeaf = true;
+            return;
+        }
+    } 
+
     
     vector<LabeledDataset> datasets = splitDataset(dataset);
     int n = (int) datasets.size();
 
-
     for (int i = 0; i < n; i++) {
         Node * child = new Node(datasets.at(i));
+        child->parent = this;
+        child->setLevel();
 
-        children.push_back(child);
         
+        children.push_back(child);
     }
+
+    
 
     if (children.size() < 2) {
         isLeaf = true;
+    } else {
+        int mostDiverseChildSize = (int) children.at(0)->uniqueAttributes.size();
+        mostDiverseChild = children.at(0);
+
+        for (int i = 0; i < n; i++) {
+            if (children.at(i)->uniqueAttributes.size() > mostDiverseChildSize) {
+                mostDiverseChildSize = (int) children.at(i)->uniqueAttributes.size();
+                mostDiverseChild = children.at(i);
+            }
+
+        }
+
     }
 }
 
@@ -99,23 +159,19 @@ string Node::getLabel() {
     return dataset.label;
 }
 
+void Node::setLevel() {
+    level = parent->level + 1;
+}
+
+int Node::getLevel() {
+    return level;
+}
 
 
-
-// Set static variables
+// Set default static variables
 int Node::id_count = 0;
-//int Node::target = 6; //data.at(0).size() - 1;
 string Node::criterion = "misclassificationError";
-
-// int main() {
-//     // Import Dataset
-//     vector<vector<string>> data = seperateHeader(read_csv("car_evaluation.csv")).second;
-    
-    
-
-//     Node x("root", data);
-
-//     x.initializeChildren();
-
-//     return 0;
-// }
+double Node::datasetPurity = 0.9;
+double Node::confidence = 1.0;
+bool Node::chiSquared = false;
+int Node::max_depth = 99999999;
