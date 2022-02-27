@@ -15,10 +15,10 @@
 using namespace std;
 
 
-class DataFrame{
-    //Implement system efficient access/edit/deletion methods
+// class DataFrame{
+//     //Implement system efficient access/edit/deletion methods
     
-};
+// };
 
 vector<vector<string>> read_csv(string filename);
 
@@ -62,6 +62,10 @@ bool chiSquaredTest(vector<vector<string>> parentData, int attribute, double con
 
 vector<pair<string, int>> getValueInstances(vector<vector<string>> data, int attribute);
 
+vector<vector<int>> bagFeaturesIndices(vector<vector<string>> dataset, int target, int numBags, int minFeatureSize);
+
+vector<vector<vector<string>>> bagFeatures(vector<vector<string>> dataset, vector<vector<int>> baggedIndices);
+
 void println(string s);
 
 void print(string s);
@@ -89,5 +93,4 @@ void print(long s);
 void print(bool s);
 
 void println(bool s);
-
 

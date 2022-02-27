@@ -15,7 +15,7 @@ class Tree {
     public:
         int node_count;
         int depth = 0;
-        vector<vector<Node *> paths; 
+        vector<vector<Node *>> paths; 
 
 
         Tree(vector<vector<string>> data);

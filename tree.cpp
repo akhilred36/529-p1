@@ -4,7 +4,7 @@
 #include <vector>
 #include <utility> // pair
 #include <stdexcept> // runtime_error
-#include <map>
+#include <unordered_map>
 #include "tree.h"
 
 
@@ -166,7 +166,7 @@ void Tree::buildPaths(vector<vector<Node *>> &paths) {
             curr = node;
             vector<Node *> path;
 
-            while (curr->getIId != root->getId) {
+            while (curr->getId() != root->getId()) {
                 path.push_back(curr);
                 curr = curr->parent;
             }
@@ -213,18 +213,18 @@ void runKnownDataset(string dataset, double splitPercent, string splitCriterion,
 
     t.setSplitCriterion(splitCriterion);
 
-    switch (leafTest) {
-        case "purity":
-            t.setPurityThreshold(leafTestValue);
-            break;
-        case "chisqr":
-            t.toggleChiSquared();
-            t.setConfidence(leafTestValue);
-            break;
-        default:
-            t.setPurityThreshold(leafTestValue);
-            break;
-    }
+    // switch (leafTest) {
+    //     case "purity":
+    //         t.setPurityThreshold(leafTestValue);
+    //         break;
+    //     case "chisqr":
+    //         t.toggleChiSquared();
+    //         t.setConfidence(leafTestValue);
+    //         break;
+    //     default:
+    //         t.setPurityThreshold(leafTestValue);
+    //         break;
+    // }
 
     
 
@@ -237,27 +237,27 @@ void runKnownDataset(string dataset, double splitPercent, string splitCriterion,
 }
 
 
-int main(int argc, char** argv) {
-    cout<< "Start" << endl;
+// int main(int argc, char** argv) {
+//     cout<< "Start" << endl;
 
-    string datasetFile = "test_refined.csv";
-    double splitPercent = 0.8;
-    string splitCriterion = "gini";
-    string leafTest = "chisqr";
-    double leafTestValue = 0.9;
+//     string datasetFile = "test_refined.csv";
+//     double splitPercent = 0.8;
+//     string splitCriterion = "gini";
+//     string leafTest = "chisqr";
+//     double leafTestValue = 0.9;
 
-    if (argc == 5) {
-        datasetFile = argv[0];
-        splitPercent = stod(argv[1]);
-        splitCriterion = argv[2];
-        leafTest = argv[3];
-        leafTestValue = stod(argv[4]);
+//     if (argc == 5) {
+//         datasetFile = argv[0];
+//         splitPercent = stod(argv[1]);
+//         splitCriterion = argv[2];
+//         leafTest = argv[3];
+//         leafTestValue = stod(argv[4]);
 
-        runKnownDataset(datasetFile, splitPercent, splitCriterion, leafTest, leafTestValue);
-    } else {
-        cout << "Incorrect number of arguments. Defaults will be used" << endl;
-        runKnownDataset(datasetFile, splitPercent, splitCriterion, leafTest, leafTestValue);
-    }
+//         runKnownDataset(datasetFile, splitPercent, splitCriterion, leafTest, leafTestValue);
+//     } else {
+//         cout << "Incorrect number of arguments. Defaults will be used" << endl;
+//         runKnownDataset(datasetFile, splitPercent, splitCriterion, leafTest, leafTestValue);
+//     }
     
-    return 0;
-}
+//     return 0;
+// }

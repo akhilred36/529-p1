@@ -55,6 +55,8 @@ class Node{
 
         void setLevel();
 
+        int getLevel();
+
 
     private:
         vector<LabeledDataset> splitDataset(LabeledDataset data);
